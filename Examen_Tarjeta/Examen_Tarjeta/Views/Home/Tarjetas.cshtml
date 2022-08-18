@@ -1,0 +1,110 @@
+﻿
+@{
+    ViewBag.Title = "Tarjetas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Tarjetas</h2>
+
+@using (Html.BeginForm("Tarjetas", "Home", FormMethod.Get))
+{
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Buscar</label>
+        <input type="text" class="form-control" id="BancoEmisor" name="BancoEmisor" placeholder="">
+    </div>
+
+    <div class="col-lg-12" style="text-align:center">
+        <button type="submit" class="btn btn-info">Buscar</button>
+    </div>
+}
+
+<a href="~/Home/Agregar" class="btn btn-warning mb-3"><i class="fa-solid fa-plus"></i></a>
+
+@{ foreach (Examen_Tarjeta.Models.Get_Tarjetas_Result posicion in Model)
+    {
+        @*if(activo === true)
+            --- tarjeta activa
+        else
+            ---tarjeta desactivada
+            *@
+        <div class="card text-white bg-dark mb-3" style="width: 18rem;">
+            <div class="card-body ">
+                <h5 class="card-title">@posicion.Banco</h5>
+                <p class="card-text">@posicion.Emisor</p>
+                <p id="numeroTarjeta">@posicion.Numero_Tarjeta</p>
+
+
+                <script>
+                    var num = Number(@posicion.Numero_Tarjeta);
+                    var digits = num.toString().split('').reverse();
+                    var NumberCard = [];
+                    for (var i = 0; i < 4; i++) {
+                        NumberCard.push(digits[i]);
+                    }
+                    NumberCard.join('');
+                    parseInt(NumberCard)
+                    console.log(NumberCard)
+
+                    if (NumberCard === null) {
+                        NumberCard = 0000;
+                    } else {
+                        var element = document.getElementById("cardNumber");
+                        element.innerHTML = NumberCard;
+                        console.log(NumberCard)
+                    }
+                </script>
+
+
+                <p>**** **** **** <span id="cardNumber"></span> </p>
+
+                @*@if ( @posicion.Fecha_Exp.ToString("MM/yy") ) //JS -> Comparar GetDate - FechaExp -> Resultado guardarlo en variable y comprarlo con la cantidad de segundos que tiene 3 meses
+        {
+            <p>@posicion.Fecha_Exp.ToString("MM/yy") <span class="badge bg-secondary">*</span> </p>
+        }
+        else
+        {*@
+                <p>@posicion.Fecha_Exp.ToString("MM/yy")</p>
+                @*}*@
+
+                <a href="~/Home/Editar?id=@posicion.Id_Tarjeta" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+
+                <a href="~/Home/Eliminar?id=@posicion.Id_Tarjeta" class="btn btn-danger border"
+                   data-bs-toggle="modal" data-bs-target="#Eliminar"
+                   onclick="Eliminar(@posicion.Id_Tarjeta)"><i class="fa-solid fa-trash-can"></i></a>
+
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                    <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                    @* Cuando lo toco activo un evento en js, que se ejecuta y me cambie el estado de una variable
+                        según sea el estado va a habilitar o deshabilitar                            
+                    *@
+                </div>
+            </div>
+        </div>
+
+    }}
+
+
+@using (Html.BeginForm("Eliminar", "Home", FormMethod.Post))
+{
+    <!-- Modal -->
+    <div class="modal fade" id="Eliminar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Eliminar Tarjeta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Quiere eliminar esta tarjeta?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
+                    <input type="text" name="Id_Tarjeta" id="inputDelete" value="" hidden />
+                    <button type="submit" value="id" class="btn btn-danger">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script src="~/scripts/Delete.js"></script>
